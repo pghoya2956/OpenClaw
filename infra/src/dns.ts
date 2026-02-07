@@ -8,7 +8,7 @@ export function createDnsRecord(
 ) {
   return new aws.route53.Record(`openclaw-${persona.name}-dns`, {
     zoneId: awsConfig.hostedZoneId,
-    name: persona.subdomain, // lab.openclaw -> lab.openclaw.sbx.infograb.io
+    name: persona.subdomain,
     type: "A",
     ttl: 300,
     records: [publicIp],
