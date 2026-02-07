@@ -13,7 +13,7 @@ export AWS_PROFILE=sandbox
 | Region | ap-northeast-2 |
 | VPC | vpc-098d05350c6ddeaa0 (IG-POC-SBX-VPC) |
 | Subnet (public) | subnet-0df3efe6e8373fa82 (AZa) |
-| Security Group | sg-04082b9accd4af5ed (Allow all) |
+| Security Group | Pulumi 관리 (`openclaw-<persona>-sg`) — SSH/HTTP/HTTPS만 허용 |
 | Key Pair | Chad (`~/.ssh/id_ed25519`) |
 | Domain | sbx.infograb.io (Z06071792MIKNXBV41TCQ) |
 
