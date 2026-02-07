@@ -161,14 +161,18 @@ sudo -u ec2-user \\
   OPENCLAW_STATE_DIR=$STATE_DIR \\
   openclaw config set tools.exec.ask always
 
-# --- Security hardening ---
+# --- Channel policy ---
 sudo -u ec2-user \\
   OPENCLAW_STATE_DIR=$STATE_DIR \\
-  openclaw config set channels.defaults.groupPolicy allowlist
+  openclaw config set channels.defaults.groupPolicy open
 
 sudo -u ec2-user \\
   OPENCLAW_STATE_DIR=$STATE_DIR \\
-  openclaw config set channels.slack.groupPolicy allowlist
+  openclaw config set channels.slack.groupPolicy open
+
+sudo -u ec2-user \\
+  OPENCLAW_STATE_DIR=$STATE_DIR \\
+  openclaw config set channels.slack.replyToMode all
 
 sudo -u ec2-user \\
   OPENCLAW_STATE_DIR=$STATE_DIR \\
