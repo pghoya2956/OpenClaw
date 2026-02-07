@@ -1,25 +1,27 @@
 import * as pulumi from "@pulumi/pulumi";
-import { getLabPersona, awsConfig } from "./src/config";
+import { getPersonas, awsConfig } from "./src/config";
 import { createSecurityGroup } from "./src/security";
 import { createInstance } from "./src/ec2";
 import { createDnsRecord } from "./src/dns";
 
-// Phase 0: Single server deployment (lab persona)
-const persona = getLabPersona();
+// Phase 1: Multi-persona deployment
+const personas = getPersonas();
 
-// Create Security Group
-const securityGroup = createSecurityGroup(persona.name);
+// Shared Security Group (keep "lab" resource name to prevent Pulumi replace)
+const securityGroup = createSecurityGroup("lab");
 
-// Create EC2 Instance
-const instance = createInstance(persona, securityGroup.id);
-
-// Create DNS Record
-const dnsRecord = createDnsRecord(persona, instance.publicIp);
+// Per-persona resources
+const results = personas.map((persona) => {
+  const instance = createInstance(persona, securityGroup.id);
+  const dns = createDnsRecord(persona, instance.publicIp);
+  return { persona, instance, dns };
+});
 
 // Exports
-export const personaName = persona.name;
-export const instanceId = instance.id;
-export const publicIp = instance.publicIp;
-export const domain = pulumi.interpolate`${persona.subdomain}.${awsConfig.baseDomain}`;
-export const gatewayUrl = pulumi.interpolate`https://${persona.subdomain}.${awsConfig.baseDomain}`;
-export const sshCommand = pulumi.interpolate`ssh -i ~/.ssh/id_ed25519 ec2-user@${instance.publicIp}`;
+export const deployedPersonas = results.map((r) => ({
+  name: r.persona.name,
+  instanceId: r.instance.id,
+  publicIp: r.instance.publicIp,
+  domain: `${r.persona.subdomain}.${awsConfig.baseDomain}`,
+  sshCommand: pulumi.interpolate`ssh -i ~/.ssh/id_ed25519 ec2-user@${r.instance.publicIp}`,
+}));
