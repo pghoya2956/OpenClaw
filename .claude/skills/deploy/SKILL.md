@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: OpenClaw EC2 인스턴스에 expert-team 페르소나를 배포한다. "/deploy", "배포해줘", "OpenClaw 띄워줘", "페르소나 배포", "{역할} 띄워줘", "인스턴스 생성해줘", "deploy status" 요청 시 사용한다. 페르소나별 SOUL.md/IDENTITY.md/AGENTS.md를 관리하고, Pulumi IaC로 AWS EC2에 배포한다.
+description: OpenClaw EC2 인스턴스에 expert-team 페르소나를 배포한다. "/deploy", "배포해줘", "OpenClaw 띄워줘", "페르소나 배포", "{역할} 띄워줘", "인스턴스 생성해줘", "deploy status" 요청 시 사용한다. 페르소나별 persona.yml + workspace 파일을 관리하고, Pulumi IaC로 AWS EC2에 배포한다.
 ---
 
 # Deploy
@@ -9,17 +9,20 @@ OpenClaw EC2 인스턴스에 expert-team 페르소나를 Pulumi IaC로 배포한
 
 ## Persona Management
 
-각 페르소나의 워크스페이스 파일은 `personas/{name}/` 하위에 관리된다:
+각 페르소나는 프로젝트 루트 `personas/{name}/` 하위에 관리된다:
 
 ```
 personas/{name}/
-├── SOUL.md        # 성격, 전문성, 프레임워크 (Core Truths/Boundaries/Vibe/Continuity)
-├── IDENTITY.md    # 표시 이름, 이모지, 바이브 (마크다운 key-value 형식)
-└── AGENTS.md      # 운영 규칙, 도구 사용법
+├── persona.yml    # 선언적 페르소나 설정 (채널, 도구, 에이전트 등)
+├── avatar.png     # (선택) 봇 아바타
+└── workspace/     # EC2에 배포되는 워크스페이스 파일
+    ├── SOUL.md        # 성격, 전문성, 프레임워크
+    ├── IDENTITY.md    # 표시 이름, 이모지, 바이브
+    └── AGENTS.md      # 운영 규칙, 도구 사용법
 ```
 
+persona.yml 설정 가능 항목은 `personas/SETTINGS.md` 참조.
 사용 가능한 페르소나와 인프라 매핑은 `references/persona-registry.md` 참조.
-각 페르소나의 전문성은 expert-team 역할 정의를 기반으로 작성됨.
 
 ## Argument Parsing
 
@@ -51,15 +54,23 @@ node --version                  # Node.js 18+
 
 각 페르소나별 `infra/.env.{name}` 파일을 확인한다. 없거나 불완전하면 `/slack-app-setup {name}` 스킬로 Slack App 생성 + .env 파일 완성을 안내한다.
 
-필수 키:
+항상 필수:
 
 | 키 | 설명 | 생성 방법 |
 |-----|------|----------|
-| `PERSONA_NAME` | 페르소나 이름 | 자동 설정 |
 | `OPENCLAW_GATEWAY_TOKEN` | Gateway 인증 토큰 | `openssl rand -hex 32` |
-| `SLACK_BOT_TOKEN` | Slack Bot Token | Slack API에서 복사 (`xoxb-...`) |
-| `SLACK_APP_TOKEN` | Slack App Token | Socket Mode 생성 (`xapp-...`) |
 | `ANTHROPIC_SETUP_TOKEN` | Anthropic Setup Token | `claude setup-token` (`sk-ant-oat01-...`) |
+
+채널별 필수 (persona.yml의 활성 채널에 따라 동적 검증):
+
+| 채널 | 환경변수 |
+|------|---------|
+| Slack | `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` |
+| Telegram | `TELEGRAM_BOT_TOKEN` |
+| Discord | `DISCORD_BOT_TOKEN` |
+| LINE | `LINE_CHANNEL_ACCESS_TOKEN`, `LINE_CHANNEL_SECRET` |
+
+전체 환경변수 목록은 `personas/SETTINGS.md` 하단 참조.
 
 **주의**: 각 페르소나는 **별도 Slack App** 필요. Socket Mode에서 동일 App Token의 여러 연결은 이벤트를 라운드 로빈 분배하여 메시지가 유실된다. Slack App 생성 절차와 manifest는 `/slack-app-setup` 스킬에서 관리한다.
 
@@ -67,11 +78,16 @@ node --version                  # Node.js 18+
 
 ### Step D: Secret Validation
 
+시크릿 검증은 `infra/src/schema.ts`의 `validateSecrets()`가 자동 수행한다.
+persona.yml의 활성 채널을 기반으로 필요한 환경변수를 동적으로 검증.
+
+수동 확인용 포맷:
 ```
 OPENCLAW_GATEWAY_TOKEN — hex, 최소 32자
-SLACK_BOT_TOKEN — "xoxb-" prefix
-SLACK_APP_TOKEN — "xapp-" prefix
 ANTHROPIC_SETUP_TOKEN — "sk-ant-oat01-" prefix, 최소 80자
+SLACK_BOT_TOKEN — "xoxb-" prefix (Slack 채널 활성 시)
+SLACK_APP_TOKEN — "xapp-" prefix (Slack 채널 활성 시)
+TELEGRAM_BOT_TOKEN — 숫자:영문 (Telegram 채널 활성 시)
 ```
 
 ### Step E: Deploy

@@ -28,14 +28,16 @@
 
 ## Adding a New Persona
 
-1. `personas/{name}/` 디렉토리 생성
-2. SOUL.md 작성 (Core Truths/Boundaries/Vibe/Continuity, 20K자 이내)
-3. IDENTITY.md 작성 (마크다운 key-value: `- **Name:** value`)
-4. AGENTS.md 작성 (운영 규칙)
-5. 이 테이블에 행 추가
-6. `infra/src/config.ts`의 `PERSONA_DEFINITIONS`에 항목 추가
+1. `personas/{name}/` 디렉토리 생성 (`mkdir -p personas/{name}/workspace`)
+2. `personas/{name}/persona.yml` 작성 (최소: subdomain + openclaw.channels)
+3. `personas/{name}/workspace/SOUL.md` 작성 (Core Truths/Boundaries/Vibe/Continuity, 20K자 이내)
+4. `personas/{name}/workspace/IDENTITY.md` 작성 (마크다운 key-value: `- **Name:** value`)
+5. `personas/{name}/workspace/AGENTS.md` 작성 (운영 규칙)
+6. 이 테이블에 행 추가
 7. `infra/.env.{name}` 시크릿 파일 생성
 8. 별도 Slack App 생성 (Socket Mode 필수)
+
+persona.yml 설정 가능 항목은 `personas/SETTINGS.md` 참조.
 
 ## IDENTITY.md Format
 

@@ -21,14 +21,20 @@ EC2 필수 태그도 환경변수로 설정: `EC2_TAG_OWNER`, `EC2_TAG_PURPOSE`,
 ## 디렉토리 구조
 
 ```
-openclaw-infra/
+OpenClaw/
 ├── CLAUDE.md
 ├── openclaw/                  # 서브모듈 (수정 금지)
-├── docs/                      # 운영 가이드
+├── personas/                  # 페르소나 정의 (선언적 YAML + 워크스페이스)
+│   ├── defaults.yml           # 공유 기본값
+│   ├── SETTINGS.md            # 설정 가능 항목 레퍼런스
+│   └── {name}/
+│       ├── persona.yml        # 페르소나 설정 (채널, 도구, 에이전트 등)
+│       └── workspace/         # EC2에 배포되는 워크스페이스 파일
 ├── .claude/skills/            # Claude Code 스킬 (deploy, slack-app-setup, security-audit)
-│   └── deploy/personas/       # 페르소나 워크스페이스 파일 (SOUL.md/IDENTITY.md/AGENTS.md)
 ├── infra/                     # Pulumi IaC
+│   ├── src/                   # schema.ts, config.ts, openclaw-config.ts, userdata.ts, ec2.ts, dns.ts, security.ts
 │   └── .env.{name}           # 페르소나별 시크릿 (gitignored)
+├── docs/                      # 운영 가이드
 └── tasks/                     # 작업 추적
 ```
 

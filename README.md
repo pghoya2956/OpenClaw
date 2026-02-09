@@ -197,14 +197,16 @@ openclaw-infra/
 ├── LICENSE
 ├── openclaw/                              # 서브모듈 (소스 참조용, 수정 금지)
 ├── docs/                                  # 운영 가이드
+├── personas/                              # 페르소나 정의 (선언적 YAML + 워크스페이스)
+│   ├── defaults.yml                       # 공유 기본값
+│   ├── SETTINGS.md                        # 설정 가능 항목 레퍼런스
+│   └── {name}/
+│       ├── persona.yml                    # 페르소나 설정 (채널, 도구, 에이전트 등)
+│       └── workspace/                     # EC2에 배포되는 워크스페이스 파일
 ├── .claude/skills/
 │   ├── deploy/                            # 배포 스킬
 │   │   ├── SKILL.md
-│   │   ├── references/persona-registry.md
-│   │   └── personas/{name}/               # 9개 페르소나 워크스페이스 파일
-│   │       ├── SOUL.md
-│   │       ├── IDENTITY.md
-│   │       └── AGENTS.md
+│   │   └── references/persona-registry.md
 │   ├── slack-app-setup/                   # Slack App 설정 스킬
 │   │   ├── SKILL.md
 │   │   └── assets/manifest.json
@@ -214,8 +216,10 @@ openclaw-infra/
 ├── infra/                                 # Pulumi IaC
 │   ├── index.ts
 │   ├── src/
-│   │   ├── config.ts                      # 페르소나 설정 + AWS 환경변수 로드
-│   │   ├── templates.ts                   # User Data + Traefik 템플릿
+│   │   ├── schema.ts                      # 타입 정의 + 검증
+│   │   ├── config.ts                      # YAML 로더 + AWS 환경변수
+│   │   ├── openclaw-config.ts             # persona.yml → openclaw.json 변환
+│   │   ├── userdata.ts                    # EC2 User Data 생성
 │   │   ├── ec2.ts                         # EC2 인스턴스
 │   │   ├── dns.ts                         # Route53 레코드
 │   │   └── security.ts                    # Security Group
