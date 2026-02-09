@@ -1,0 +1,14 @@
+# instance.yml — 통합 EC2 인스턴스 설정
+# 단일 인스턴스에서 모든 에이전트를 호스팅
+
+# --- EC2 인스턴스 ---
+instance:
+  type: t3.medium             # 2 vCPU, 4GB RAM. swap 8GB로 메모리 릭 대비
+  volumeSize: 50              # GB (gp3). 9개 에이전트 세션 저장 + 로그
+  swapSizeGB: 8               # Node.js 힙 미반환 + pi-agent-core 메모리 릭 대비
+
+# --- 인프라 옵션 ---
+infra:
+  traefik: true               # HTTPS 리버스 프록시 (와일드카드 인증서)
+  extensions: []              # 확장 채널 npm 패키지
+  systemDeps: []              # 추가 시스템 패키지
