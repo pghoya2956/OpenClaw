@@ -1,0 +1,55 @@
+---
+title: OpenClaw Internals
+description: OpenClaw 공식 문서 가이드 & 소스 코드 레벨 학습 가이드
+template: splash
+hero:
+  tagline: AI 에이전트 플랫폼 OpenClaw의 사용법과 내부 동작을 한국어로 이해하는 통합 가이드
+  actions:
+    - text: 공식 문서 가이드
+      link: /user-guide/
+      icon: external
+    - text: 소스 코드 딥다이브
+      link: /guides/introduction/
+      icon: right-arrow
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## 공식 문서 가이드
+
+[docs.openclaw.ai](https://docs.openclaw.ai)의 **"어떻게 설정하고 사용하는가"**를 주제별로 정리한 한국어 링크 모음.
+
+<CardGrid>
+	<LinkCard title="설치 & 시작" href="/user-guide/install/" description="설치 방법, 초기 설정 마법사, 호스팅 옵션" />
+	<LinkCard title="채널 연결" href="/user-guide/channels/" description="Slack, Discord, Telegram 등 15개 메시징 플랫폼" />
+	<LinkCard title="에이전트 설정" href="/user-guide/agents/" description="에이전트 정의, 시스템 프롬프트, 세션, 멀티에이전트" />
+	<LinkCard title="도구 & 스킬" href="/user-guide/tools/" description="내장 도구, 브라우저, 스킬, 플러그인" />
+	<LinkCard title="모델 & 프로바이더" href="/user-guide/models/" description="LLM 프로바이더 설정, 모델 페일오버" />
+	<LinkCard title="게이트웨이 운영" href="/user-guide/gateway/" description="설정, 보안, 프로토콜, 원격 접속, 웹 UI" />
+</CardGrid>
+
+<div style="text-align: center; margin-top: 0.5rem;">
+[자동화](/user-guide/automation/) · [CLI 레퍼런스](/user-guide/cli/) · [전체 목록](/user-guide/)
+</div>
+
+---
+
+## 소스 코드 딥다이브
+
+**"내부에서 어떻게 동작하는가"** — 4,800개+ TypeScript 파일의 소스 코드를 메시지 흐름 순서로 분석.
+
+<CardGrid stagger>
+	<Card title="아키텍처 이해" icon="setting">
+		게이트웨이, 채널, 에이전트 런타임의 전체 구조를 파악합니다.
+	</Card>
+	<Card title="메시지 흐름 추적" icon="right-arrow">
+		Slack 메시지가 시스템을 관통하는 여정을 코드 레벨에서 따라갑니다.
+	</Card>
+	<Card title="서브시스템 딥다이브" icon="open-book">
+		설정, 라우팅, 세션, 스킬 등 각 서브시스템의 내부 동작을 분석합니다.
+	</Card>
+	<Card title="확장 포인트" icon="add-document">
+		플러그인, 훅, 도구 시스템을 통한 확장 방법을 학습합니다.
+	</Card>
+</CardGrid>

@@ -1,4 +1,7 @@
-# Slack App 생성 가이드
+---
+title: Slack App 생성
+description: OpenClaw 페르소나 배포를 위한 Slack App 생성 절차
+---
 
 OpenClaw 페르소나 배포를 위한 Slack App 생성 절차. 각 페르소나는 별도 Slack App이 필요하다 (Socket Mode 이벤트가 동일 App Token의 여러 연결에 라운드 로빈 분배되므로 공유 불가).
 
@@ -121,59 +124,25 @@ App 생성 후 2개 토큰을 수집:
 | Bot Token | OAuth & Permissions → Bot User OAuth Token | `xoxb-...` |
 | App Token | Basic Information → App-Level Tokens | `xapp-...` |
 
-## .env 파일 저장
+## .env.secrets 파일 저장
 
-수집한 토큰을 `infra/.env.{persona-name}` 파일에 저장:
-
-```bash
-# infra/.env.product-leader
-PERSONA_NAME=product-leader
-OPENCLAW_GATEWAY_TOKEN=<openssl rand -hex 32 로 생성>
-SLACK_BOT_TOKEN=xoxb-...
-SLACK_APP_TOKEN=xapp-...
-ANTHROPIC_SETUP_TOKEN=sk-ant-oat01-...
-```
-
-Gateway 토큰 생성:
+수집한 토큰을 `infra/.env.secrets` 파일에 추가:
 
 ```bash
-openssl rand -hex 32
+# infra/.env.secrets (해당 에이전트 섹션)
+SLACK_BOT_TOKEN__{ACCOUNT}=xoxb-...
+SLACK_APP_TOKEN__{ACCOUNT}=xapp-...
 ```
 
-Anthropic Setup Token은 모든 페르소나가 동일한 값을 공유한다 (lab의 `.env.lab`에서 복사).
-
-## 페르소나별 체크리스트
-
-Phase 1 초기 배포 대상 (lab 제외, 이미 존재):
-
-```
-○ product-leader  → Slack App: "Product Leader"  → .env.product-leader
-○ engineering-lead → Slack App: "Engineering Lead" → .env.engineering-lead
-○ growth-expert   → Slack App: "Growth Expert"    → .env.growth-expert
-```
-
-각 App에 대해:
-
-```
-○ Manifest로 App 생성
-○ Install to Workspace 완료
-○ Bot Token (xoxb-) 복사
-○ App Token (xapp-) 복사
-○ .env.{name} 파일 생성
-○ Gateway Token 생성 (openssl rand -hex 32)
-○ Anthropic Setup Token 복사
-```
+`{ACCOUNT}`는 agent.yml의 `slackAccount` 대문자 변환 (예: `ceo` → `CEO`).
 
 ## 검증
 
-.env 파일 생성 후 필수 키 존재 확인:
+토큰 저장 후 필수 키 존재 확인:
 
 ```bash
-for persona in product-leader engineering-lead growth-expert; do
-  echo "--- $persona ---"
-  for key in PERSONA_NAME OPENCLAW_GATEWAY_TOKEN SLACK_BOT_TOKEN SLACK_APP_TOKEN ANTHROPIC_SETUP_TOKEN; do
-    grep -q "^${key}=" "infra/.env.${persona}" && echo "  $key: OK" || echo "  $key: MISSING"
-  done
+for key in SLACK_BOT_TOKEN__CEO SLACK_APP_TOKEN__CEO; do
+  grep -q "^${key}=" "infra/.env.secrets" && echo "  $key: OK" || echo "  $key: MISSING"
 done
 ```
 

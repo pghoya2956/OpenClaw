@@ -11,6 +11,10 @@ node_modules/
 infra/node_modules/
 infra/bin/
 
+# Docs build output
+docs/dist/
+docs/.astro/
+
 # Pulumi state (Pulumi Cloud에서 관리)
 infra/.pulumi/
 
@@ -38,3 +42,4 @@ tasks/
 .worktrees/
 .security-key
 logs/security/
+.mcp.json
