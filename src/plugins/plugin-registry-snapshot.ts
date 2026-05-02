@@ -158,16 +158,6 @@ function hasStalePersistedPluginMetadata(index: InstalledPluginIndex): boolean {
     if (!packageJsonPath) {
       return true;
     }
-    const packageJsonSignatureMatches = fileSignatureMatches(
-      packageJsonPath,
-      plugin.packageJson.fileSignature,
-    );
-    if (packageJsonSignatureMatches === true) {
-      return false;
-    }
-    if (packageJsonSignatureMatches === false) {
-      return hashExistingFile(packageJsonPath) !== plugin.packageJson.hash;
-    }
     const packageJsonHash = hashExistingFile(packageJsonPath);
     return packageJsonHash !== plugin.packageJson.hash;
   });
