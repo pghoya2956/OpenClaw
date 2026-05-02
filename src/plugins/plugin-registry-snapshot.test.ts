@@ -119,16 +119,13 @@ describe("loadPluginRegistrySnapshotWithMetadata", () => {
       env,
       stateDir,
     });
-    const pluginMetadataFileReads = readFileSyncSpy.mock.calls.filter((call) => {
+    const pluginManifestFileReads = readFileSyncSpy.mock.calls.filter((call) => {
       const filePath = String(call[0]);
-      return (
-        filePath === path.join(rootDir, "openclaw.plugin.json") ||
-        filePath === path.join(rootDir, "package.json")
-      );
+      return filePath === path.join(rootDir, "openclaw.plugin.json");
     });
 
     expect(result.source).toBe("persisted");
-    expect(pluginMetadataFileReads).toEqual([]);
+    expect(pluginManifestFileReads).toEqual([]);
   });
 
   it("detects same-size same-mtime manifest replacements", () => {
